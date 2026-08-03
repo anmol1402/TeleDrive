@@ -573,7 +573,7 @@ const Dashboard = ({ user, onLogout }) => {
               <button onClick={() => fetchFiles()} className="action-btn" style={{ flexShrink: 0 }}>Retry</button>
             </div>
           )}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <div className="dashboard-header">
             <h2 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               {searchQuery ? 'Search Results' : (
                 <div className="breadcrumb">
@@ -595,7 +595,7 @@ const Dashboard = ({ user, onLogout }) => {
                 </div>
               )}
             </h2>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+         <div className="dashboard-header-actions">
               <FilterDropdown activeFilters={activeFilters} setActiveFilters={setActiveFilters} />
               <SortDropdown sortBy={sortBy} setSortBy={setSortBy} sortOrder={sortOrder} setSortOrder={setSortOrder} />
               {activeCategory === 'Trash' && (
