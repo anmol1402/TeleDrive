@@ -3,6 +3,8 @@ import { File, Image as ImageIcon, FileText, Music, Video, Folder, Download, Eye
 import ContextMenu from './ContextMenu';
 import FilePreviewModal from './FilePreviewModal';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, viewMode = 'grid', loading = false, selectedFiles = [], setSelectedFiles, setIsSidebarOpen }) => {
   const [viewingFile, setViewingFile] = useState(null);
   const [contextMenu, setContextMenu] = useState(null);
@@ -168,7 +170,7 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
   const handleDownload = (e, file) => {
     e.stopPropagation();
     if (file.isFolder) return;
-    window.location.href = `http://localhost:3001/api/files/download/${file.messageId}`;
+    window.location.href = `${API_URL}/api/files/download/${file.messageId}`;
   };
 
   const handleCardClick = (file) => {
@@ -216,7 +218,7 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
   const updateMetadata = async (e, file, updates) => {
     e.stopPropagation();
     try {
-      await fetch(`http://localhost:3001/api/files/update/${file.messageId}`, {
+      await fetch(`${API_URL}/api/files/update/${file.messageId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates)
@@ -231,7 +233,7 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
     e.stopPropagation();
     if (window.confirm("Permanently delete this file?")) {
       try {
-        await fetch(`http://localhost:3001/api/files/delete`, {
+        await fetch(`${API_URL}/api/files/delete`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ messageIds: [file.messageId] })
@@ -288,7 +290,7 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
       const targetPath = currentPath === '/' ? `/${targetFolder.filename}` : `${currentPath}/${targetFolder.filename}`;
       
       messageIds.forEach(id => {
-         fetch(`http://localhost:3001/api/files/update/${id}`, {
+         fetch(`${API_URL}/api/files/update/${id}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ folder: targetPath })
@@ -302,7 +304,7 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
 
   const handleShare = async (e, file) => {
     if (e && e.stopPropagation) e.stopPropagation();
-    const downloadUrl = `http://localhost:3001/api/files/download/${file.messageId}`;
+    const downloadUrl = `${API_URL}/api/files/download/${file.messageId}`;
 
     if (navigator.share) {
       try {

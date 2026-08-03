@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Download, Share2, ZoomIn, ZoomOut, Maximize, XCircle, ChevronLeft, ChevronRight, Music } from 'lucide-react';
 import CustomVideoPlayer from '../features/CustomVideoPlayer';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 const FilePreviewModal = ({ file, files, onClose }) => {
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -87,7 +89,7 @@ const FilePreviewModal = ({ file, files, onClose }) => {
     e.stopPropagation();
     try {
       const a = document.createElement('a');
-      a.href = `http://localhost:3001/api/files/download/${currentFile.messageId}`;
+      a.href = `${API_URL}/api/files/download/${currentFile.messageId}`;
       a.download = currentFile.filename;
       document.body.appendChild(a);
       a.click();
@@ -99,7 +101,7 @@ const FilePreviewModal = ({ file, files, onClose }) => {
 
   const handleShare = async (e) => {
     e.stopPropagation();
-    const downloadUrl = `http://localhost:3001/api/files/download/${currentFile.messageId}`;
+    const downloadUrl = `${API_URL}/api/files/download/${currentFile.messageId}`;
     if (navigator.share) {
       try {
         await navigator.share({
@@ -179,7 +181,7 @@ const FilePreviewModal = ({ file, files, onClose }) => {
           {isImageOrVideo(currentFile.filename) ? (
             isImage(currentFile.filename) ? (
               <img 
-                src={`http://localhost:3001/api/files/download/${currentFile.messageId}`} 
+                src={`${API_URL}/api/files/download/${currentFile.messageId}`} 
                 alt="preview" 
                 draggable="false"
                 onMouseDown={handleMouseDown}
@@ -191,13 +193,13 @@ const FilePreviewModal = ({ file, files, onClose }) => {
                 }} 
               />
             ) : (
-              <CustomVideoPlayer src={`http://localhost:3001/api/files/download/${currentFile.messageId}`} />
+              <CustomVideoPlayer src={`${API_URL}/api/files/download/${currentFile.messageId}`} />
             )
           ) : currentFile.filename.match(/\.(mp3|wav|ogg|m4a)$/i) ? (
             <div style={{ textAlign: 'center', background: 'var(--bg-secondary)', padding: '4rem', borderRadius: 'var(--radius-xl)', border: '1px solid var(--border-color)', boxShadow: '0 10px 40px rgba(0,0,0,0.5)', width: '400px' }}>
               <Music size={80} style={{ color: 'var(--accent-primary)', marginBottom: '3rem' }} />
               <audio 
-                src={`http://localhost:3001/api/files/download/${currentFile.messageId}`} 
+                src={`${API_URL}/api/files/download/${currentFile.messageId}`} 
                 autoPlay 
                 controls
                 style={{ width: '100%' }}
@@ -205,13 +207,13 @@ const FilePreviewModal = ({ file, files, onClose }) => {
             </div>
           ) : currentFile.filename.match(/\.(pdf)$/i) ? (
             <iframe 
-              src={`http://localhost:3001/api/files/download/${currentFile.messageId}`} 
+              src={`${API_URL}/api/files/download/${currentFile.messageId}`} 
               style={{ width: '80vw', height: '85vh', borderRadius: 'var(--radius-lg)', border: 'none', background: 'white', boxShadow: '0 10px 40px rgba(0,0,0,0.5)' }}
               title="PDF Preview"
             />
           ) : currentFile.filename.match(/\.(txt|md|csv|json)$/i) ? (
             <iframe 
-              src={`http://localhost:3001/api/files/download/${currentFile.messageId}`} 
+              src={`${API_URL}/api/files/download/${currentFile.messageId}`} 
               style={{ width: '80vw', height: '85vh', borderRadius: 'var(--radius-lg)', border: 'none', background: 'white', boxShadow: '0 10px 40px rgba(0,0,0,0.5)', padding: '2rem' }}
               title="Text Preview"
             />

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, CartesianGrid } from 'recharts';
 import { X, HardDrive, File as FileIcon, AlertTriangle, Clock, Folder } from 'lucide-react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 const COLORS = ['#6366f1', '#a855f7', '#ec4899', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#6b7280'];
 
 const formatBytes = (bytes, decimals = 2) => {
@@ -26,7 +28,7 @@ const Analytics = ({ onClose }) => {
     useEffect(() => {
         const fetchAnalytics = async () => {
             try {
-                const res = await fetch('http://localhost:3001/api/analytics');
+                const res = await fetch(`${API_URL}/api/analytics`);
                 const json = await res.json();
                 if (json.success) setData(json);
             } catch (error) {

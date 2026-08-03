@@ -1,6 +1,8 @@
 import React from 'react';
 import { X, Info, File, Folder, Image, Video, Music, FileText, HardDrive, Calendar, Tag, User, Star } from 'lucide-react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 const formatBytes = (bytes, decimals = 2) => {
   if (!+bytes) return '0 Bytes';
   const k = 1024;
@@ -272,7 +274,7 @@ const MetadataSidebar = ({ files = [], isOpen, onClose, userProfile }) => {
         let mounted = true;
         if (!fileId) return;
         setLoading(true);
-        fetch(`http://localhost:3001/api/files/${fileId}/insights`)
+        fetch(`${API_URL}/api/files/${fileId}/insights`)
             .then(res => res.json())
             .then(data => {
                 if (mounted) {

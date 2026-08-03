@@ -13,6 +13,8 @@ import BulkToolbar from '../files/BulkToolbar';
 import UploadProgress from '../features/UploadProgress';
 import UploadModal from '../features/UploadModal';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 const formatBytes = (bytes, decimals = 2) => {
   if (!+bytes) return '0 Bytes';
   const k = 1024;
@@ -101,7 +103,7 @@ const Dashboard = ({ user, onLogout }) => {
   const fetchFiles = async (query = '') => {
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:3001/api/files${query ? `?query=${encodeURIComponent(query)}` : ''}`);
+      const res = await fetch(`${API_URL}/api/files${query ? `?query=${encodeURIComponent(query)}` : ''}`);
       const data = await res.json();
       if (!res.ok || !data.success) {
         throw new Error(data.error || 'Unable to load files.');
@@ -120,7 +122,7 @@ const Dashboard = ({ user, onLogout }) => {
     fetchUserProfile();
     fetchTotalStorage();
 
-    const eventSource = new EventSource('http://localhost:3001/api/events');
+    const eventSource = new EventSource(`${API_URL}/api/events`);
     eventSource.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
@@ -155,7 +157,7 @@ const Dashboard = ({ user, onLogout }) => {
 
   const fetchTotalStorage = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/analytics');
+      const res = await fetch(`${API_URL}/api/analytics`);
       const data = await res.json();
       if (data.success) setTotalStorage(data.analytics.totalSize);
     } catch (e) {
@@ -165,7 +167,7 @@ const Dashboard = ({ user, onLogout }) => {
 
   const fetchUserProfile = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/user');
+      const res = await fetch(`${API_URL}/api/user`);
       const data = await res.json();
       if (data.success) {
         setUserProfile(data.user);
@@ -187,7 +189,7 @@ const Dashboard = ({ user, onLogout }) => {
     const xhr = new XMLHttpRequest();
     xhrRefs.current[upload.id] = xhr;
 
-    xhr.open('POST', 'http://localhost:3001/api/files/upload', true);
+    xhr.open('POST', `${API_URL}/api/files/upload`, true);
 
     xhr.upload.onprogress = (event) => {
       if (event.lengthComputable) {
@@ -321,7 +323,7 @@ const Dashboard = ({ user, onLogout }) => {
   const handleCreateFolder = async () => {
     if (!newFolderName.trim()) return;
     try {
-      await fetch('http://localhost:3001/api/files/folder', {
+      await fetch(`${API_URL}/api/files/folder`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -345,7 +347,7 @@ const Dashboard = ({ user, onLogout }) => {
     if (window.confirm("Are you sure you want to permanently delete all items in the Trash? This cannot be undone.")) {
       try {
         const messageIds = trashedFiles.map(f => f.messageId);
-        await fetch('http://localhost:3001/api/files/delete', {
+        await fetch(`${API_URL}/api/files/delete`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ messageIds })
@@ -521,7 +523,7 @@ const Dashboard = ({ user, onLogout }) => {
                     border: '2px solid transparent', borderColor: showProfileMenu ? 'var(--accent-primary)' : 'transparent',
                   }}
                 >
-                  <img src="http://localhost:3001/api/user/avatar" alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
+                  <img src={`${API_URL}/api/user/avatar`} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
                 </button>
                 {showProfileMenu && (
                   <div style={{

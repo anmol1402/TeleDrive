@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { X, Send, Bot, User, Loader2, Paperclip, CheckSquare, Square, FileText } from 'lucide-react';
 import Markdown from 'react-markdown';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 const AIChat = ({ onClose, files: allFiles = [] }) => {
     const [messages, setMessages] = useState([{ role: 'bot', text: 'Hello! I am your AI assistant. Ask me anything about your files!' }]);
     const [input, setInput] = useState('');
@@ -22,7 +24,7 @@ const AIChat = ({ onClose, files: allFiles = [] }) => {
         setLoading(true);
 
         try {
-            const res = await fetch('http://localhost:3001/api/chat', {
+            const res = await fetch(`${API_URL}/api/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query: userQuery, fileIds: selectedIds })

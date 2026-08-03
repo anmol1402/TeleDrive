@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 const Login = ({ onLoginSuccess }) => {
   const [phone, setPhone] = useState('');
   const [code, setCode] = useState('');
@@ -12,7 +14,7 @@ const Login = ({ onLoginSuccess }) => {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('http://localhost:3001/api/auth/sendCode', {
+      const res = await fetch(`${API_URL}/api/auth/sendCode`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone }),
@@ -35,7 +37,7 @@ const Login = ({ onLoginSuccess }) => {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('http://localhost:3001/api/auth/login', {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, code }),

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Trash2, FolderInput, Download, Star, Tag, X } from 'lucide-react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 const BulkToolbar = ({ selectedFiles, setSelectedFiles, refreshFiles }) => {
   if (!selectedFiles || selectedFiles.length === 0) return null;
 
@@ -8,7 +10,7 @@ const BulkToolbar = ({ selectedFiles, setSelectedFiles, refreshFiles }) => {
     if (window.confirm(`Are you sure you want to delete ${selectedFiles.length} items?`)) {
       try {
         const messageIds = selectedFiles.map(f => f.messageId);
-        await fetch(`http://localhost:3001/api/files/delete`, {
+        await fetch(`${API_URL}/api/files/delete`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ messageIds })
@@ -24,7 +26,7 @@ const BulkToolbar = ({ selectedFiles, setSelectedFiles, refreshFiles }) => {
   const handleBulkFavorite = async () => {
     try {
       await Promise.all(selectedFiles.map(f => 
-        fetch(`http://localhost:3001/api/files/update/${f.messageId}`, {
+        fetch(`${API_URL}/api/files/update/${f.messageId}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ favorite: true })
@@ -40,7 +42,7 @@ const BulkToolbar = ({ selectedFiles, setSelectedFiles, refreshFiles }) => {
   const handleBulkDownload = () => {
     selectedFiles.forEach(f => {
       if (!f.isFolder) {
-        window.open(`http://localhost:3001/api/files/download/${f.messageId}`, '_blank');
+        window.open(`${API_URL}/api/files/download/${f.messageId}`, '_blank');
       }
     });
     setSelectedFiles([]);
@@ -52,7 +54,7 @@ const BulkToolbar = ({ selectedFiles, setSelectedFiles, refreshFiles }) => {
     
     try {
       await Promise.all(selectedFiles.map(f => 
-        fetch(`http://localhost:3001/api/files/update/${f.messageId}`, {
+        fetch(`${API_URL}/api/files/update/${f.messageId}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ folder: targetPath })
@@ -74,7 +76,7 @@ const BulkToolbar = ({ selectedFiles, setSelectedFiles, refreshFiles }) => {
       await Promise.all(selectedFiles.map(f => {
         const existingTags = f.metadata?.tags || [];
         const newTags = [...new Set([...existingTags, ...tags])];
-        return fetch(`http://localhost:3001/api/files/update/${f.messageId}`, {
+        return fetch(`${API_URL}/api/files/update/${f.messageId}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ tags: newTags })
