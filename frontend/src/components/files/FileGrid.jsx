@@ -5,7 +5,7 @@ import FilePreviewModal from './FilePreviewModal';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, viewMode = 'grid', loading = false, selectedFiles = [], setSelectedFiles, setIsSidebarOpen }) => {
+const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, viewMode = 'grid', loading = false, selectedFiles = [], setSelectedFiles, setIsSidebarOpen, onOpenProperties }) => {
   const [viewingFile, setViewingFile] = useState(null);
   const [contextMenu, setContextMenu] = useState(null);
   const [renamingFile, setRenamingFile] = useState(null);
@@ -213,7 +213,11 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
     onFavorite: (file) => updateMetadata({ stopPropagation: () => { } }, file, { favorite: !file.favorite }),
     onDelete: (file) => category === 'Trash' ? permanentDelete({ stopPropagation: () => { } }, file) : updateMetadata({ stopPropagation: () => { } }, file, { trashed: true, trashedAt: new Date().toISOString() }),
     onProperties: (file) => {
-      if (setSelectedFiles) setSelectedFiles([file]);
+      if (onOpenProperties) {
+        onOpenProperties(file);
+      } else if (setSelectedFiles) {
+        setSelectedFiles([file]);
+      }
     }
   };
 
