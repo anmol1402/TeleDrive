@@ -229,7 +229,7 @@ const CustomVideoPlayer = ({ src, autoPlay = true }) => {
           left: 0,
           right: 0,
           background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, transparent 100%)',
-          padding: '20px 20px 10px 20px',
+          padding: 'clamp(10px, 3vw, 20px) clamp(10px, 3vw, 20px) clamp(5px, 2vw, 10px) clamp(10px, 3vw, 20px)',
           opacity: showControls ? 1 : 0,
           transition: 'opacity 0.3s ease',
           pointerEvents: showControls ? 'auto' : 'none',
@@ -278,7 +278,7 @@ const CustomVideoPlayer = ({ src, autoPlay = true }) => {
         </div>
 
         {/* Controls Row */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
             <button 
               onClick={togglePlay}
@@ -302,7 +302,7 @@ const CustomVideoPlayer = ({ src, autoPlay = true }) => {
                 value={isMuted ? 0 : volume}
                 onChange={handleVolumeChange}
                 style={{
-                  width: '80px',
+                  width: 'clamp(50px, 15vw, 80px)',
                   height: '4px',
                   accentColor: 'white',
                   cursor: 'pointer'
