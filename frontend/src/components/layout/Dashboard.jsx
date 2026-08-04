@@ -25,9 +25,9 @@ const formatBytes = (bytes, decimals = 2) => {
 };
 
 const Dashboard = ({ user, onLogout }) => {
-  const [activeCategory, setActiveCategory] = useState('My Drive');
+  const [activeCategory, setActiveCategory] = useState(() => sessionStorage.getItem('activeCategory') || 'My Drive');
   const [isSidebarOpen, setIsSidebarOpen] = useState(() => window.innerWidth > 768);
-  const [currentPath, setCurrentPath] = useState('/');
+  const [currentPath, setCurrentPath] = useState(() => sessionStorage.getItem('currentPath') || '/');
   const [searchQuery, setSearchQuery] = useState('');
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -149,7 +149,16 @@ const Dashboard = ({ user, onLogout }) => {
   }, []);
 
   useEffect(() => {
+    sessionStorage.setItem('activeCategory', activeCategory);
+  }, [activeCategory]);
+
+  useEffect(() => {
+    sessionStorage.setItem('currentPath', currentPath);
+  }, [currentPath]);
+
+  useEffect(() => {
     fetchFiles();
+    fetchUserProfile();
   }, [lastUpdate]);
 
   useEffect(() => {
