@@ -19,6 +19,8 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
   const isDragging = useRef(false);
   const startCoords = useRef({ x: 0, y: 0 });
   const clickTimeoutRef = useRef(null);
+  const touchTimerRef = useRef(null);   
+  const longPressOccurredRef = useRef(false);
   const initialSelectionRef = useRef([]);
   const filteredFiles = useMemo(() => files.slice(0, visibleCount), [files, visibleCount]);
 
@@ -374,10 +376,72 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
       </div>
     );
   }
+    const handleTouchStart = (e, file, index) => {
+    const isMobile = window.innerWidth <= 768;
+    if (!isMobile) return;
+    longPressOccurredRef.current = false;
+    touchTimerRef.current = setTimeout(() => {
+      touchTimerRef.current = null;
+      longPressOccurredRef.current = true;
+      handleSelect(e, file, index, true);
+      if (navigator.vibrate) navigator.vibrate(50); // Haptic feedback
+    }, 500); // 500ms long press duration
+  };
 
-  const handleSelect = (e, file, index) => {
+  const handleTouchEnd = () => {
+    if (touchTimerRef.current) {
+      clearTimeout(touchTimerRef.current);
+      touchTimerRef.current = null;
+    }
+  };
+
+  const handleTouchMove = () => {
+    if (touchTimerRef.current) {
+      clearTimeout(touchTimerRef.current); // Cancel long press if user scrolls
+      touchTimerRef.current = null;
+    }
+  };
+  const handleTouchStart = (e, file, index) => {
+    const isMobile = window.innerWidth <= 768;
+    if (!isMobile) return;
+    longPressOccurredRef.current = false;
+    touchTimerRef.current = setTimeout(() => {
+      touchTimerRef.current = null;
+      longPressOccurredRef.current = true;
+      handleSelect(e, file, index, true);
+      if (navigator.vibrate) navigator.vibrate(50);
+    }, 500);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchTimerRef.current) {
+      clearTimeout(touchTimerRef.current);
+      touchTimerRef.current = null;
+    }
+  };
+
+  const handleTouchMove = () => {
+    if (touchTimerRef.current) {
+      clearTimeout(touchTimerRef.current);
+      touchTimerRef.current = null;
+    }
+  };
+
+  const handleSelect = (e, file, index, isLongPress = false) => {
     e.stopPropagation();
     e.preventDefault();
+
+    const isMobile = window.innerWidth <= 768;
+
+    // If it's a mobile tap (not a long press)
+    if (isMobile && !isLongPress) {
+      if (longPressOccurredRef.current) {
+        longPressOccurredRef.current = false;
+        return;
+      }
+      handleCardClick(file); // Single tap directly opens file/folder
+      return;
+    }
 
     if (clickTimeoutRef.current) {
       clearTimeout(clickTimeoutRef.current);
@@ -389,9 +453,8 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
     clickTimeoutRef.current = setTimeout(() => {
       if (!setSelectedFiles) return;
 
-      if (setIsSidebarOpen) {
-        setIsSidebarOpen(true);
-      }
+      /* Sidebar bug fix: The setIsSidebarOpen block is intentionally gone now! */
+
 
       const isSelected = selectedFiles.some(f => f.messageId === file.messageId);
 
@@ -455,6 +518,9 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
           onClick={(e) => handleSelect(e, file, index)}
           onDoubleClick={(e) => handleDoubleClickWrapper(e, file)}
           onContextMenu={(e) => handleContextMenu(e, file)}
+          onTouchStart={(e) => handleTouchStart(e, file, index)} 
+            onTouchEnd={handleTouchEnd}
+           onTouchMove={handleTouchMove}  
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', overflow: 'hidden', flex: 1 }}>
             {getBaseIcon(file)}
@@ -500,6 +566,9 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
         onClick={(e) => handleSelect(e, file, index)}
         onDoubleClick={(e) => handleDoubleClickWrapper(e, file)}
         onContextMenu={(e) => handleContextMenu(e, file)}
+        onTouchStart={(e) => handleTouchStart(e, file, index)} 
+        onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchMove}  
       >
         {fileActions}
         <div className="file-info" style={{ padding: 0, display: 'flex', alignItems: 'center', flex: 1, gap: '1rem', overflow: 'hidden', width: '100%' }}>
