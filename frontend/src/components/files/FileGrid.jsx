@@ -177,7 +177,10 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
 
   const handleCardClick = (file) => {
     if (file.isFolder) {
-      setCurrentPath(currentPath === '/' ? `/${file.filename}` : `${currentPath}/${file.filename}`);
+      let parent = file.folder;
+      if (!parent) parent = '/';
+      const targetPath = parent === '/' ? `/${file.filename}` : `${parent}/${file.filename}`;
+      setCurrentPath(targetPath);
     } else {
       setViewingFile(file);
     }
