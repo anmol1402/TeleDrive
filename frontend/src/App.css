@@ -759,6 +759,15 @@
     border: none !important;
   }
 
+  .metadata-sidebar {
+    position: fixed !important;
+    top: 0;
+    right: 0;
+    height: 100vh !important;
+    z-index: 10000;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.3);
+  }
+
   .overlay {
     padding: 0 !important;
   }
