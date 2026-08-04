@@ -85,13 +85,13 @@ const Analytics = ({ onClose }) => {
                     <X size={24} />
                 </button>
                 
-                <div style={{ padding: '2rem' }}>
+              <div style={{ padding: 'clamp(1rem, 5vw, 2rem)' }}>
                     <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem', fontFamily: 'Outfit' }}>
                         <HardDrive color="var(--accent-primary)" /> Storage Analytics
                     </h2>
 
                     {/* Top Level Storage Stats */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
                         <div style={{ background: 'var(--bg-primary)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
                             <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Used Storage</div>
                             <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>{formatBytes(analytics.totalSize)}</div>
@@ -111,8 +111,7 @@ const Analytics = ({ onClose }) => {
                     </div>
 
                     {/* Charts Row */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>
-                        
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>                        
                         {/* Storage by Category */}
                         <div style={{ background: 'var(--bg-primary)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
                             <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '1rem' }}>Storage by Category</h3>
@@ -149,8 +148,7 @@ const Analytics = ({ onClose }) => {
                     </div>
 
                     {/* Lists Row */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>
-                        
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>                        
                         {/* Largest Folders */}
                         <div style={{ background: 'var(--bg-primary)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
                             <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
