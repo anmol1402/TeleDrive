@@ -182,9 +182,6 @@ const DriveTopbar = ({
             <List size={18} />
           </button>
         </div>
-        <button onClick={() => setIsDarkMode(!isDarkMode)} className="topbar-btn" title="Toggle theme" style={{ marginRight: '-0.5rem' }}>
-          {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
         {children}
       </div>
     </div>
