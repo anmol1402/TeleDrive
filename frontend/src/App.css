@@ -302,6 +302,11 @@
   position: relative;
 }
 
+.file-card.selected {
+  background: var(--accent-glow);
+  border-color: var(--accent-primary);
+}
+
 .file-card:hover {
   background: var(--bg-tertiary);
   z-index: 50;
@@ -789,6 +794,11 @@
   cursor: pointer;
   position: relative;
   height: 56px;
+}
+
+.file-list-row.selected {
+  background: var(--accent-glow);
+  border-color: var(--accent-primary);
 }
 
 .file-list-row:hover {
