@@ -166,22 +166,6 @@ const DriveTopbar = ({
       </div>
 
       <div className="topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem', paddingRight: '1.5rem' }}>
-        <div style={{ display: 'flex', border: '1px solid var(--border-color)', borderRadius: '8px', overflow: 'hidden' }}>
-          <button 
-            onClick={() => setViewMode('grid')} 
-            style={{ padding: '0.25rem 0.5rem', background: viewMode === 'grid' ? 'var(--bg-tertiary)' : 'transparent', border: 'none', cursor: 'pointer', color: viewMode === 'grid' ? 'var(--text-primary)' : 'var(--text-secondary)' }}
-            title="Grid view"
-          >
-            <LayoutGrid size={18} />
-          </button>
-          <button 
-            onClick={() => setViewMode('list')} 
-            style={{ padding: '0.25rem 0.5rem', background: viewMode === 'list' ? 'var(--bg-tertiary)' : 'transparent', border: 'none', cursor: 'pointer', color: viewMode === 'list' ? 'var(--text-primary)' : 'var(--text-secondary)' }}
-            title="List view"
-          >
-            <List size={18} />
-          </button>
-        </div>
         {children}
       </div>
     </div>
