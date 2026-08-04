@@ -93,14 +93,15 @@ const BulkToolbar = ({ selectedFiles, setSelectedFiles, refreshFiles }) => {
     <div className="bulk-toolbar animate-fade-up" style={{
       position: 'fixed', bottom: '2rem', left: '50%', transform: 'translateX(-50%)',
       background: 'var(--bg-secondary)', border: '1px solid var(--border-color)',
-      borderRadius: '32px', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center',
-      gap: '1rem', boxShadow: '0 8px 32px rgba(0,0,0,0.2)', zIndex: 9999
+      borderRadius: '32px', padding: '0.5rem clamp(0.5rem, 2vw, 1rem)', display: 'flex', alignItems: 'center',
+      gap: 'clamp(0.25rem, 1vw, 1rem)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)', zIndex: 9999,
+      maxWidth: 'calc(100vw - 2rem)', flexWrap: 'wrap', justifyContent: 'center'
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)', fontWeight: 500, paddingRight: '1rem', borderRight: '1px solid var(--border-color)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)', fontWeight: 500, paddingRight: 'clamp(0.25rem, 1vw, 1rem)', borderRight: '1px solid var(--border-color)' }}>
         <span style={{ background: 'var(--accent-primary)', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '0.8rem' }}>
           {selectedFiles.length}
         </span>
-        <span>Selected</span>
+        <span className="hide-on-mobile">Selected</span>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
