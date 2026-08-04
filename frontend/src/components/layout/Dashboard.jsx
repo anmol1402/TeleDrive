@@ -40,6 +40,7 @@ const Dashboard = ({ user, onLogout }) => {
   const [userProfile, setUserProfile] = useState(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [totalStorage, setTotalStorage] = useState(0);
+  const [showMobileMetadata, setShowMobileMetadata] = useState(false);
 
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showAIChat, setShowAIChat] = useState(false);
@@ -509,49 +510,58 @@ const Dashboard = ({ user, onLogout }) => {
           setSelectedFiles={setSelectedFiles}
           setCurrentPath={setCurrentPath}
         >
-          {!searchQuery && activeCategory !== 'Trash' && activeCategory !== 'Favorites' && (
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <button onClick={() => setShowAIChat(true)} className="topbar-btn" title="AI Chat"><Bot size={20} /></button>
-              <button onClick={() => setShowAnalytics(true)} className="topbar-btn" title="Analytics"><BarChart2 size={20} /></button>
-              <button onClick={() => setCreatingFolder(true)} className="topbar-btn" title="New Folder"><FolderPlus size={20} /></button>
-              <div style={{ position: 'relative' }} ref={profileMenuRef}>
-                <button
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                  className="topbar-btn"
-                  style={{
-                    padding: 0, borderRadius: '50%', overflow: 'hidden', width: '36px', height: '36px',
-                    border: '2px solid transparent', borderColor: showProfileMenu ? 'var(--accent-primary)' : 'transparent',
-                  }}
-                >
-                  <img src={`${API_URL}/api/user/avatar`} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
-                </button>
-                {showProfileMenu && (
-                  <div style={{
-                    position: 'absolute', top: 'calc(100% + 0.5rem)', right: 0, background: 'var(--bg-secondary)', border: '1px solid var(--border-color)',
-                    borderRadius: '12px', padding: '0.5rem', minWidth: '240px', boxShadow: '0 4px 20px rgba(0,0,0,0.15)', zIndex: 50, display: 'flex', flexDirection: 'column', gap: '0.5rem'
-                  }}>
-                    {userProfile && (
-                      <div style={{ padding: '0.5rem', borderBottom: '1px solid var(--border-color)' }}>
-                        <div style={{ fontWeight: 'bold' }}>{userProfile.firstName} {userProfile.lastName || ''}</div>
-                        <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>@{userProfile.username}</div>
-                        <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{userProfile.phone}</div>
-                      </div>
-                    )}
-                    <button onClick={onLogout} className="action-btn" style={{ width: '100%', justifyContent: 'flex-start', color: '#ef4444' }}>
-                      <LogOut size={16} style={{ marginRight: '0.5rem' }} /> Logout
-                    </button>
-                  </div>
-                )}
-              </div>
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            {!searchQuery && activeCategory !== 'Trash' && activeCategory !== 'Favorites' && (
+              <>
+                <button onClick={() => setShowAIChat(true)} className="topbar-btn" title="AI Chat"><Bot size={20} /></button>
+                <button onClick={() => setShowAnalytics(true)} className="topbar-btn" title="Analytics"><BarChart2 size={20} /></button>
+                <button onClick={() => setCreatingFolder(true)} className="topbar-btn" title="New Folder"><FolderPlus size={20} /></button>
+              </>
+            )}
+            <div style={{ position: 'relative' }} ref={profileMenuRef}>
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="topbar-btn"
+                style={{
+                  padding: 0, borderRadius: '50%', overflow: 'hidden', width: '36px', height: '36px',
+                  border: '2px solid transparent', borderColor: showProfileMenu ? 'var(--accent-primary)' : 'transparent',
+                }}
+              >
+                <img src={`${API_URL}/api/user/avatar`} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
+              </button>
+              {showProfileMenu && (
+                <div style={{
+                  position: 'absolute', top: 'calc(100% + 0.5rem)', right: 0, background: 'var(--bg-secondary)', border: '1px solid var(--border-color)',
+                  borderRadius: '12px', padding: '0.5rem', minWidth: '240px', boxShadow: '0 4px 20px rgba(0,0,0,0.15)', zIndex: 50, display: 'flex', flexDirection: 'column', gap: '0.5rem'
+                }}>
+                  {userProfile && (
+                    <div style={{ padding: '0.5rem', borderBottom: '1px solid var(--border-color)' }}>
+                      <div style={{ fontWeight: 'bold' }}>{userProfile.firstName} {userProfile.lastName || ''}</div>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>@{userProfile.username}</div>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{userProfile.phone}</div>
+                    </div>
+                  )}
+                  <button onClick={() => setIsDarkMode(!isDarkMode)} className="action-btn" style={{ width: '100%', justifyContent: 'flex-start', borderRadius: '8px', padding: '0.5rem', color: 'var(--text-primary)' }}>
+                    {isDarkMode ? <Sun size={16} style={{ marginRight: '0.5rem' }} /> : <Moon size={16} style={{ marginRight: '0.5rem' }} />}
+                    {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+                  </button>
+                  <button onClick={onLogout} className="action-btn" style={{ width: '100%', justifyContent: 'flex-start', color: '#ef4444', borderRadius: '8px', padding: '0.5rem' }}>
+                    <LogOut size={16} style={{ marginRight: '0.5rem' }} /> Logout
+                  </button>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </DriveTopbar>
       }
       rightSidebar={
         <MetadataSidebar
           files={selectedFiles}
-          isOpen={selectedFiles.length > 0 && window.innerWidth > 768}
-          onClose={() => setSelectedFiles([])}
+          isOpen={(selectedFiles.length > 0 && window.innerWidth > 768) || showMobileMetadata}
+          onClose={() => {
+            setSelectedFiles([]);
+            setShowMobileMetadata(false);
+          }}
           userProfile={userProfile}
         />
       }
@@ -646,6 +656,10 @@ const Dashboard = ({ user, onLogout }) => {
             selectedFiles={selectedFiles}
             setSelectedFiles={setSelectedFiles}
             setIsSidebarOpen={setIsSidebarOpen}
+            onOpenProperties={(file) => {
+              setSelectedFiles([file]);
+              setShowMobileMetadata(true);
+            }}
           />
           <BulkToolbar
             selectedFiles={selectedFiles}
