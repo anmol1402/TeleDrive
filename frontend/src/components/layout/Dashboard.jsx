@@ -56,6 +56,12 @@ const Dashboard = ({ user, onLogout }) => {
 
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
 
+  const handleNavigate = (path) => {
+    if (activeCategory !== 'My Drive') setActiveCategory('My Drive');
+    if (searchQuery) setSearchQuery('');
+    setCurrentPath(path);
+  };
+
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
@@ -499,7 +505,7 @@ const Dashboard = ({ user, onLogout }) => {
             isSidebarOpen={isSidebarOpen}
             files={files}
             currentPath={currentPath}
-            setCurrentPath={setCurrentPath}
+            setCurrentPath={handleNavigate}
             onNewUploadClick={() => setShowUploadModal(true)}
             totalStorage={totalStorage}
           />
@@ -517,7 +523,7 @@ const Dashboard = ({ user, onLogout }) => {
           setIsDarkMode={setIsDarkMode}
           files={files}
           setSelectedFiles={setSelectedFiles}
-          setCurrentPath={setCurrentPath}
+          setCurrentPath={handleNavigate}
         >
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             {!searchQuery && activeCategory !== 'Trash' && activeCategory !== 'Favorites' && (
@@ -596,7 +602,7 @@ const Dashboard = ({ user, onLogout }) => {
             <h2 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               {searchQuery ? 'Search Results' : (
                 <div className="breadcrumb">
-                  <span className={`breadcrumb-segment ${currentPath === '/' ? 'active' : ''}`} onClick={() => setCurrentPath('/')}>
+                  <span className={`breadcrumb-segment ${currentPath === '/' ? 'active' : ''}`} onClick={() => handleNavigate('/')}>
                     {activeCategory} <span style={{ fontSize: '0.85em', color: 'var(--text-secondary)', marginLeft: '0.5rem', fontWeight: 'normal' }}>({countText})</span>
                   </span>
                   {currentPath !== '/' && currentPath.split('/').filter(Boolean).map((segment, idx, arr) => {
@@ -605,7 +611,7 @@ const Dashboard = ({ user, onLogout }) => {
                     return (
                       <React.Fragment key={pathUpToSegment}>
                         <ChevronRight size={16} className="breadcrumb-separator" />
-                        <span className={`breadcrumb-segment ${isLast ? 'active' : ''}`} onClick={() => !isLast && setCurrentPath(pathUpToSegment)}>
+                        <span className={`breadcrumb-segment ${isLast ? 'active' : ''}`} onClick={() => !isLast && handleNavigate(pathUpToSegment)}>
                           {segment}
                         </span>
                       </React.Fragment>
@@ -617,6 +623,22 @@ const Dashboard = ({ user, onLogout }) => {
             <div className="dashboard-header-actions">
               <FilterDropdown activeFilters={activeFilters} setActiveFilters={setActiveFilters} />
               <SortDropdown sortBy={sortBy} setSortBy={setSortBy} sortOrder={sortOrder} setSortOrder={setSortOrder} />
+              <div style={{ display: 'flex', border: '1px solid var(--border-color)', borderRadius: '8px', overflow: 'hidden', height: '36px' }}>
+                <button 
+                  onClick={() => setViewMode('grid')} 
+                  style={{ padding: '0 0.5rem', background: viewMode === 'grid' ? 'var(--bg-tertiary)' : 'transparent', border: 'none', cursor: 'pointer', color: viewMode === 'grid' ? 'var(--text-primary)' : 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  title="Grid view"
+                >
+                  <LayoutGrid size={18} />
+                </button>
+                <button 
+                  onClick={() => setViewMode('list')} 
+                  style={{ padding: '0 0.5rem', background: viewMode === 'list' ? 'var(--bg-tertiary)' : 'transparent', border: 'none', cursor: 'pointer', color: viewMode === 'list' ? 'var(--text-primary)' : 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  title="List view"
+                >
+                  <List size={18} />
+                </button>
+              </div>
               {activeCategory === 'Trash' && (
                 <button onClick={handleEmptyTrash} className="empty-trash-btn" style={{ display: 'flex', alignItems: 'center' }}>
                   <Trash2 size={16} style={{ marginRight: '0.5rem' }} /> Empty Trash
@@ -658,7 +680,7 @@ const Dashboard = ({ user, onLogout }) => {
             files={sortedFiles}
             category={activeCategory}
             currentPath={currentPath}
-            setCurrentPath={setCurrentPath}
+            setCurrentPath={handleNavigate}
             refreshFiles={fetchFiles}
             viewMode={viewMode}
             loading={loading}
