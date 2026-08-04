@@ -515,7 +515,9 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
           onTouchMove={handleTouchMove}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', overflow: 'hidden', flex: 1 }}>
-            {getBaseIcon(file)}
+            <div style={{ flexShrink: 0, display: 'flex' }}>
+              {getBaseIcon(file)}
+            </div>
             {renamingFile === file.messageId ? (
               <input
                 type="text"
@@ -564,7 +566,9 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
       >
         {fileActions}
         <div className="file-info" style={{ padding: 0, display: 'flex', alignItems: 'center', flex: 1, gap: '1rem', overflow: 'hidden', width: '100%' }}>
-          {getBaseIcon(file)}
+          <div style={{ flexShrink: 0, display: 'flex' }}>
+            {getBaseIcon(file)}
+          </div>
           {renamingFile === file.messageId ? (
             <input
               type="text"
