@@ -414,6 +414,18 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
         longPressOccurredRef.current = false;
         return;
       }
+      
+      // If we are already selecting files, single tap should toggle selection
+      if (selectedFiles.length > 0) {
+        const isSelected = selectedFiles.some(f => f.messageId === file.messageId);
+        if (isSelected) {
+          setSelectedFiles(selectedFiles.filter(f => f.messageId !== file.messageId));
+        } else {
+          setSelectedFiles([...selectedFiles, file]);
+        }
+        return;
+      }
+
       handleCardClick(file);
       return;
     }
@@ -423,7 +435,8 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
     }
 
     const isShift = e.shiftKey;
-    const isCtrl = e.ctrlKey || e.metaKey;
+    // On mobile, a long press acts as if the Ctrl key is held (toggles selection without clearing others)
+    const isCtrl = e.ctrlKey || e.metaKey || (isMobile && isLongPress);
 
     clickTimeoutRef.current = setTimeout(() => {
       if (!setSelectedFiles) return;
