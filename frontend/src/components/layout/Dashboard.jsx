@@ -57,10 +57,11 @@ const Dashboard = ({ user, onLogout }) => {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
 
   const handleNavigate = (path) => {
-    if (activeCategory !== 'My Drive') setActiveCategory('My Drive');
     if (searchQuery) setSearchQuery('');
     setCurrentPath(path);
   };
+
+  const initialMountRef = useRef(true);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -376,6 +377,10 @@ const Dashboard = ({ user, onLogout }) => {
   };
 
   useEffect(() => {
+    if (initialMountRef.current) {
+      initialMountRef.current = false;
+      return;
+    }
     setCurrentPath('/');
     setSelectedFiles([]);
   }, [activeCategory]);
@@ -421,7 +426,9 @@ const Dashboard = ({ user, onLogout }) => {
         return false;
       }
     } else {
-      if (activeCategory === 'My Drive') {
+      if (currentPath !== '/') {
+        if (normalizePath(f.folder) !== normalizePath(currentPath)) return false;
+      } else if (activeCategory === 'My Drive') {
         if (normalizePath(f.folder) !== normalizePath(currentPath)) return false;
       }
     }
