@@ -550,7 +550,7 @@ const Dashboard = ({ user, onLogout }) => {
       rightSidebar={
         <MetadataSidebar
           files={selectedFiles}
-          isOpen={selectedFiles.length > 0}
+          isOpen={selectedFiles.length > 0 && window.innerWidth > 768}
           onClose={() => setSelectedFiles([])}
           userProfile={userProfile}
         />
@@ -573,7 +573,7 @@ const Dashboard = ({ user, onLogout }) => {
               <button onClick={() => fetchFiles()} className="action-btn" style={{ flexShrink: 0 }}>Retry</button>
             </div>
           )}
-        <div className="dashboard-header">
+          <div className="dashboard-header">
             <h2 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               {searchQuery ? 'Search Results' : (
                 <div className="breadcrumb">
@@ -595,7 +595,7 @@ const Dashboard = ({ user, onLogout }) => {
                 </div>
               )}
             </h2>
-         <div className="dashboard-header-actions">
+            <div className="dashboard-header-actions">
               <FilterDropdown activeFilters={activeFilters} setActiveFilters={setActiveFilters} />
               <SortDropdown sortBy={sortBy} setSortBy={setSortBy} sortOrder={sortOrder} setSortOrder={setSortOrder} />
               {activeCategory === 'Trash' && (
