@@ -134,12 +134,12 @@ const FilePreviewModal = ({ file, files, onClose }) => {
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1.5rem 2rem', background: 'linear-gradient(to bottom, rgba(0,0,0,0.7), transparent)', zIndex: 10 }}>
-        <div style={{ color: 'white', display: 'flex', flexDirection: 'column' }}>
-          <span style={{ fontSize: '1.25rem', fontWeight: 600 }}>{currentFile.filename}</span>
-          <span style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' }}>{currentIndex + 1} of {previewableFiles.length}</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', padding: 'clamp(1rem, 4vw, 1.5rem) clamp(1rem, 5vw, 2rem)', background: 'linear-gradient(to bottom, rgba(0,0,0,0.7), transparent)', zIndex: 10 }}>
+        <div style={{ color: 'white', display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
+          <span style={{ fontSize: 'clamp(1rem, 4vw, 1.25rem)', fontWeight: 600, wordBreak: 'break-word', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{currentFile.filename}</span>
+          <span style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginTop: '0.25rem' }}>{currentIndex + 1} of {previewableFiles.length}</span>
         </div>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           {isImage(currentFile.filename) && (
             <div style={{ display: 'flex', background: 'rgba(255,255,255,0.1)', borderRadius: 'var(--radius-full)', padding: '4px' }}>
               <button onClick={(e) => { e.stopPropagation(); setZoom(prev => Math.max(1, prev - 0.25)); }} style={{ background: 'transparent', border: 'none', color: 'white', padding: '8px', cursor: 'pointer', borderRadius: '50%' }}>
@@ -171,8 +171,7 @@ const FilePreviewModal = ({ file, files, onClose }) => {
         {currentIndex > 0 && (
           <button 
             onClick={handlePrev}
-            style={{ position: 'absolute', left: '2rem', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', borderRadius: '50%', width: '48px', height: '48px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10, backdropFilter: 'blur(4px)' }}
-          >
+            style={{ position: 'absolute', left: 'clamp(0.5rem, 2vw, 2rem)', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', borderRadius: '50%', width: 'clamp(36px, 10vw, 48px)', height: 'clamp(36px, 10vw, 48px)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10, backdropFilter: 'blur(4px)' }}          >
             <ChevronLeft size={32} />
           </button>
         )}
@@ -233,8 +232,7 @@ const FilePreviewModal = ({ file, files, onClose }) => {
         {currentIndex < previewableFiles.length - 1 && (
           <button 
             onClick={handleNext}
-            style={{ position: 'absolute', right: '2rem', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', borderRadius: '50%', width: '48px', height: '48px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10, backdropFilter: 'blur(4px)' }}
-          >
+            style={{ position: 'absolute', right: 'clamp(0.5rem, 2vw, 2rem)', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', borderRadius: '50%', width: 'clamp(36px, 10vw, 48px)', height: 'clamp(36px, 10vw, 48px)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10, backdropFilter: 'blur(4px)' }}          >
             <ChevronRight size={32} />
           </button>
         )}
