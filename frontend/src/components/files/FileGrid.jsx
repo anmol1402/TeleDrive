@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { File, Image as ImageIcon, FileText, Music, Video, Folder, Download, Eye, Star, Trash2, RotateCcw, XCircle, Share2, Edit2, MoreVertical, Terminal } from 'lucide-react';
 import ContextMenu from './ContextMenu';
 import FilePreviewModal from './FilePreviewModal';
+import FolderSelectionModal from './FolderSelectionModal';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
@@ -10,6 +11,7 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
   const [contextMenu, setContextMenu] = useState(null);
   const [renamingFile, setRenamingFile] = useState(null);
   const [newName, setNewName] = useState('');
+  const [folderModalConfig, setFolderModalConfig] = useState(null);
 
   const [visibleCount, setVisibleCount] = useState(30);
   const observerTarget = useRef(null);
@@ -211,9 +213,21 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
       setRenamingFile(file.messageId);
       setNewName(file.filename);
     },
-    onMove: (file) => alert(`Move action triggered for ${file.filename}. UI stub only.`),
-    onCopy: (file) => alert(`Copy action triggered for ${file.filename}. UI stub only.`),
-    onDuplicate: (file) => alert(`Duplicate action triggered for ${file.filename}. UI stub only.`),
+    onMove: (file) => setFolderModalConfig({ action: 'move', file }),
+    onCopy: (file) => setFolderModalConfig({ action: 'copy', file }),
+    onDuplicate: async (file) => {
+      try {
+        const newName = `Copy of ${file.filename}`;
+        await fetch(`${API_URL}/api/files/duplicate/${file.messageId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: newName })
+        });
+        refreshFiles();
+      } catch (err) {
+        console.error("Duplicate failed", err);
+      }
+    },
     onDownload: (file) => handleDownload({ stopPropagation: () => { } }, file),
     onFavorite: (file) => updateMetadata({ stopPropagation: () => { } }, file, { favorite: !file.favorite }),
     onDelete: (file) => category === 'Trash' ? permanentDelete({ stopPropagation: () => { } }, file) : updateMetadata({ stopPropagation: () => { } }, file, { trashed: true, trashedAt: new Date().toISOString() }),
@@ -223,6 +237,30 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
       } else if (setSelectedFiles) {
         setSelectedFiles([file]);
       }
+    }
+  };
+
+  const handleFolderAction = async (targetPath) => {
+    if (!folderModalConfig) return;
+    const { action, file } = folderModalConfig;
+    try {
+      if (action === 'move') {
+        await fetch(`${API_URL}/api/files/update/${file.messageId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ folder: targetPath })
+        });
+      } else if (action === 'copy') {
+        await fetch(`${API_URL}/api/files/duplicate/${file.messageId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ folder: targetPath })
+        });
+      }
+      refreshFiles();
+      setFolderModalConfig(null);
+    } catch(err) {
+      console.error(`${action} failed`, err);
     }
   };
 
@@ -678,6 +716,16 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
           file={contextMenu.file}
           onClose={() => setContextMenu(null)}
           actions={menuActions}
+        />
+      )}
+
+      {folderModalConfig && (
+        <FolderSelectionModal
+          files={files}
+          action={folderModalConfig.action}
+          file={folderModalConfig.file}
+          onClose={() => setFolderModalConfig(null)}
+          onConfirm={(targetPath) => handleFolderAction(targetPath)}
         />
       )}
     </div>
