@@ -25,7 +25,14 @@ const formatBytes = (bytes, decimals = 2) => {
 };
 
 const Dashboard = ({ user, onLogout }) => {
-  const [activeCategory, setActiveCategory] = useState(() => sessionStorage.getItem('activeCategory') || 'My Drive');
+  const [activeCategory, setActiveCategory] = useState(() => {
+    const hash = window.location.hash;
+    if (hash && hash.length > 1) {
+      const formatted = hash.substring(1).replace(/-/g, ' ');
+      return formatted.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    }
+    return sessionStorage.getItem('activeCategory') || 'My Drive';
+  });
   const [isSidebarOpen, setIsSidebarOpen] = useState(() => window.innerWidth > 768);
   const [currentPath, setCurrentPath] = useState(() => sessionStorage.getItem('currentPath') || '/');
   const [searchQuery, setSearchQuery] = useState('');
@@ -60,6 +67,14 @@ const Dashboard = ({ user, onLogout }) => {
     if (searchQuery) setSearchQuery('');
     setCurrentPath(path);
   };
+
+  useEffect(() => {
+    sessionStorage.setItem('activeCategory', activeCategory);
+    const hash = activeCategory === 'My Drive' ? '' : `#${activeCategory.toLowerCase().replace(/\s+/g, '-')}`;
+    if (window.location.hash !== hash) {
+      window.history.replaceState(null, '', hash || window.location.pathname);
+    }
+  }, [activeCategory]);
 
   const initialMountRef = useRef(true);
 
