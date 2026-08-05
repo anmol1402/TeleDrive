@@ -134,34 +134,34 @@ const FilePreviewModal = ({ file, files, onClose }) => {
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1.5rem 2rem', background: 'linear-gradient(to bottom, rgba(0,0,0,0.7), transparent)', zIndex: 10 }}>
-        <div style={{ color: 'white', display: 'flex', flexDirection: 'column' }}>
-          <span style={{ fontSize: '1.25rem', fontWeight: 600 }}>{currentFile.filename}</span>
-          <span style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' }}>{currentIndex + 1} of {previewableFiles.length}</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', background: 'linear-gradient(to bottom, rgba(0,0,0,0.7), transparent)', zIndex: 10, alignItems: 'center', gap: '0.5rem' }}>
+        <div style={{ color: 'white', display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
+          <span style={{ fontSize: '1.1rem', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentFile.filename}</span>
+          <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>{currentIndex + 1} of {previewableFiles.length}</span>
         </div>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: 0 }}>
           {isImage(currentFile.filename) && (
-            <div style={{ display: 'flex', background: 'rgba(255,255,255,0.1)', borderRadius: 'var(--radius-full)', padding: '4px' }}>
-              <button onClick={(e) => { e.stopPropagation(); setZoom(prev => Math.max(1, prev - 0.25)); }} style={{ background: 'transparent', border: 'none', color: 'white', padding: '8px', cursor: 'pointer', borderRadius: '50%' }}>
-                <ZoomOut size={20} />
+            <div style={{ display: 'flex', background: 'rgba(255,255,255,0.1)', borderRadius: 'var(--radius-full)', padding: '2px' }}>
+              <button onClick={(e) => { e.stopPropagation(); setZoom(prev => Math.max(1, prev - 0.25)); }} style={{ background: 'transparent', border: 'none', color: 'white', padding: '6px', cursor: 'pointer', borderRadius: '50%' }}>
+                <ZoomOut size={18} />
               </button>
-              <button onClick={(e) => { e.stopPropagation(); resetZoom(); }} style={{ background: 'transparent', border: 'none', color: 'white', padding: '8px', cursor: 'pointer', borderRadius: '50%' }}>
-                <Maximize size={20} />
+              <button onClick={(e) => { e.stopPropagation(); resetZoom(); }} style={{ background: 'transparent', border: 'none', color: 'white', padding: '6px', cursor: 'pointer', borderRadius: '50%' }}>
+                <Maximize size={18} />
               </button>
-              <button onClick={(e) => { e.stopPropagation(); setZoom(prev => Math.min(5, prev + 0.25)); }} style={{ background: 'transparent', border: 'none', color: 'white', padding: '8px', cursor: 'pointer', borderRadius: '50%' }}>
-                <ZoomIn size={20} />
+              <button onClick={(e) => { e.stopPropagation(); setZoom(prev => Math.min(5, prev + 0.25)); }} style={{ background: 'transparent', border: 'none', color: 'white', padding: '6px', cursor: 'pointer', borderRadius: '50%' }}>
+                <ZoomIn size={18} />
               </button>
             </div>
           )}
           
-          <button onClick={handleDownload} title="Download" style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', padding: '12px', cursor: 'pointer', borderRadius: '50%' }}>
-            <Download size={20} />
+          <button onClick={handleDownload} title="Download" style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', padding: '8px', cursor: 'pointer', borderRadius: '50%' }}>
+            <Download size={18} />
           </button>
-          <button onClick={handleShare} title="Share" style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', padding: '12px', cursor: 'pointer', borderRadius: '50%' }}>
-            <Share2 size={20} />
+          <button onClick={handleShare} title="Share" style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', padding: '8px', cursor: 'pointer', borderRadius: '50%' }}>
+            <Share2 size={18} />
           </button>
-          <button onClick={onClose} title="Close" style={{ background: 'transparent', border: 'none', color: 'white', padding: '12px', cursor: 'pointer', marginLeft: '1rem' }}>
-            <XCircle size={32} />
+          <button onClick={onClose} title="Close" style={{ background: 'transparent', border: 'none', color: 'white', padding: '8px', cursor: 'pointer', marginLeft: '0.5rem' }}>
+            <XCircle size={28} />
           </button>
         </div>
       </div>
@@ -186,7 +186,7 @@ const FilePreviewModal = ({ file, files, onClose }) => {
                 draggable="false"
                 onMouseDown={handleMouseDown}
                 style={{ 
-                  maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 'var(--radius-lg)', boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
+                  maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', objectFit: 'contain', borderRadius: 'var(--radius-lg)', boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
                   transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
                   cursor: zoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default',
                   transition: isDragging ? 'none' : 'transform 0.2s ease'
