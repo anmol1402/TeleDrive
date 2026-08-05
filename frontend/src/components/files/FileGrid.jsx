@@ -176,7 +176,7 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
   const handleDownload = (e, file) => {
     e.stopPropagation();
     if (file.isFolder) return;
-    window.location.href = `${API_URL}/api/files/download/${file.messageId}`;
+    window.location.href = `${API_URL}/api/files/download/${file.messageId}?download=1`;
   };
 
   const handleCardClick = (file) => {
