@@ -1,123 +1,226 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Filter, Image, Video, Music, FileText, Archive, Terminal, File, Check } from 'lucide-react';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
 
-export const FILTER_CATEGORIES = {
-  'Images': { icon: <Image size={16} />, exts: ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'] },
-  'Videos': { icon: <Video size={16} />, exts: ['mp4', 'avi', 'mov', 'mkv', 'webm'] },
-  'Audio': { icon: <Music size={16} />, exts: ['mp3', 'wav', 'ogg', 'm4a'] },
-  'PDF': { icon: <FileText size={16} color="#ef4444" />, exts: ['pdf'] },
-  'Word': { icon: <FileText size={16} color="#3b82f6" />, exts: ['doc', 'docx'] },
-  'Excel': { icon: <FileText size={16} color="#10b981" />, exts: ['xls', 'xlsx', 'csv'] },
-  'PowerPoint': { icon: <FileText size={16} color="#f59e0b" />, exts: ['ppt', 'pptx'] },
-  'ZIP': { icon: <Archive size={16} />, exts: ['zip'] },
-  'RAR': { icon: <Archive size={16} />, exts: ['rar'] },
-  'APK': { icon: <File size={16} />, exts: ['apk'] },
-  'Programming': { icon: <Terminal size={16} />, exts: ['js', 'jsx', 'ts', 'tsx', 'py', 'html', 'css', 'json', 'java', 'c', 'cpp', 'rs', 'go'] },
-  'Executables': { icon: <Terminal size={16} />, exts: ['exe', 'msi', 'bat', 'cmd', 'sh'] },
-  'Archives': { icon: <Archive size={16} />, exts: ['zip', 'rar', '7z', 'tar', 'gz'] },
-  'Documents': { icon: <FileText size={16} />, exts: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv', 'txt'] },
-};
+:root {
+  /* Colors - Google Drive Material Design 3 */
+  --bg-primary: #f8fafd;
+  /* App background (very light blue-grey) */
+  --bg-secondary: #ffffff;
+  /* Surface (cards, sidebar, etc.) */
+  --bg-tertiary: #f0f4f9;
+  /* Hover state background */
+  --bg-glass: rgba(255, 255, 255, 0.8);
 
-const FilterDropdown = ({ activeFilters, setActiveFilters }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  --text-primary: #1f1f1f;
+  --text-secondary: #444746;
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isOpen]);
+  --accent-primary: #0b57d0;
+  /* M3 Primary Blue */
+  --accent-hover: #c2e7ff;
+  /* M3 Light Blue (Active/Hover background) */
+  --accent-glow: rgba(11, 87, 208, 0.2);
 
-  const toggleFilter = (filterKey) => {
-    if (activeFilters.includes(filterKey)) {
-      setActiveFilters(activeFilters.filter(f => f !== filterKey));
-    } else {
-      setActiveFilters([...activeFilters, filterKey]);
-    }
-  };
+  --border-color: #c7c7c7;
+  --border-hover: #727272;
 
-  return (
-    <div className="filter-dropdown-container" ref={dropdownRef} style={{ position: 'relative' }}>
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        style={{
-          display: 'flex', alignItems: 'center', gap: '0.5rem',
-          background: activeFilters.length > 0 ? 'var(--accent-primary)' : 'var(--bg-secondary)', 
-          border: '1px solid',
-          borderColor: activeFilters.length > 0 ? 'var(--accent-primary)' : 'var(--border-color)',
-          padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer',
-          color: activeFilters.length > 0 ? 'white' : 'var(--text-primary)', 
-          fontSize: '0.9rem',
-          transition: 'all 0.2s ease'
-        }}
-        onMouseEnter={(e) => {
-            if (activeFilters.length === 0) e.currentTarget.style.borderColor = 'var(--accent-primary)';
-        }}
-        onMouseLeave={(e) => {
-            if (activeFilters.length === 0) e.currentTarget.style.borderColor = 'var(--border-color)';
-        }}
-      >
-        <Filter size={16} />
-        <span>Filter</span>
-        {activeFilters.length > 0 && (
-          <span style={{ 
-            background: 'white', color: 'var(--accent-primary)', 
-            borderRadius: '50%', width: '20px', height: '20px', 
-            display: 'flex', alignItems: 'center', justifyContent: 'center', 
-            fontSize: '0.75rem', fontWeight: 'bold' 
-          }}>
-            {activeFilters.length}
-          </span>
-        )}
-      </button>
+  /* Shadows - Material Design */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-glass: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
 
-      {isOpen && (
-        <div className="dropdown-menu-responsive" style={{
-          minWidth: '240px', padding: '0.5rem',
-          maxHeight: '400px', overflowY: 'auto'
-        }}>
-          
-          <div style={{ padding: '0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            File Types
-          </div>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-            {Object.keys(FILTER_CATEGORIES).map(key => {
-              const isActive = activeFilters.includes(key);
-              return (
-                <button
-                  key={key}
-                  onClick={() => toggleFilter(key)}
-                  style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '0.5rem 0.75rem', border: 'none', 
-                    background: isActive ? 'var(--bg-tertiary)' : 'transparent',
-                    color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
-                    borderRadius: '6px', cursor: 'pointer', width: '100%', textAlign: 'left',
-                    transition: 'background 0.15s ease'
-                  }}
-                  onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'var(--bg-tertiary)'; }}
-                  onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    {FILTER_CATEGORIES[key].icon}
-                    <span>{key}</span>
-                  </div>
-                  {isActive && <Check size={16} color="var(--accent-primary)" />}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
 
-export default FilterDropdown;
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+}
+
+.dark {
+  --bg-primary: #131314;
+  --bg-secondary: #1e1f20;
+  --bg-tertiary: #282a2c;
+  --bg-glass: rgba(30, 31, 32, 0.8);
+
+  --text-primary: #e3e3e3;
+  --text-secondary: #c4c7c5;
+
+  --accent-primary: #a8c7fa;
+  --accent-hover: #004a77;
+  --accent-glow: rgba(168, 199, 250, 0.2);
+
+  --border-color: #444746;
+  --border-hover: #8e918f;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.6), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -2px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.7), 0 10px 10px -5px rgba(0, 0, 0, 0.6);
+  --shadow-glass: 0 4px 12px 0 rgba(0, 0, 0, 0.5);
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.brand-font {
+  font-family: 'Outfit', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+a {
+  color: var(--accent-primary);
+  text-decoration: none;
+}
+
+/* Glassmorphism Utility */
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-glass);
+}
+
+/* Scrollbar */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s var(--transition-bounce) forwards;
+}
+
+@keyframes bouncePulse {
+
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-5px) scale(1.05);
+  }
+}
+
+/* Dashboard Layout Overrides for Mobile */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.dashboard-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .dashboard-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+/* Responsive Dropdown for Filter and Sort */
+.dropdown-menu-responsive {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+}
+
+@media (max-width: 768px) {
+  .dropdown-menu-responsive {
+    right: auto;
+    left: 0;
+  }
+}
