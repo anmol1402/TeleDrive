@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Search, LogOut, Cloud, FolderPlus, ChevronRight, BarChart2, Bot, Menu, Sun, Moon, LayoutGrid, List, X, Plus, Trash2 } from 'lucide-react';
+import { Search, LogOut, Cloud, FolderPlus, ChevronRight, BarChart2, Bot, Menu, Sun, Moon, LayoutGrid, List, X, Plus, Trash2, Upload } from 'lucide-react';
 import Sidebar from './Sidebar';
 import FileGrid from '../files/FileGrid';
 import Analytics from '../features/Analytics';
@@ -364,6 +364,9 @@ const Dashboard = ({ user, onLogout }) => {
   const dragCounter = useRef(0);
 
   const hasFiles = (e) => {
+    if (e.dataTransfer.types && e.dataTransfer.types.includes('application/teleclone-internal-drag')) {
+      return false;
+    }
     return e.dataTransfer.types && (e.dataTransfer.types.includes('Files') || e.dataTransfer.types.includes('application/x-moz-file'));
   };
 
@@ -399,6 +402,8 @@ const Dashboard = ({ user, onLogout }) => {
     
     setIsDragging(false);
     dragCounter.current = 0;
+
+    if (!hasFiles(e)) return;
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       processFiles(e.dataTransfer.files);
@@ -781,7 +786,7 @@ const Dashboard = ({ user, onLogout }) => {
 
         {/* Mobile FAB */}
         <button className="fab-btn" onClick={() => setShowUploadModal(true)} title="Upload File">
-          <Plus size={24} />
+          <Upload size={24} />
         </button>
 
         {showAnalytics && <Analytics onClose={() => setShowAnalytics(false)} />}
