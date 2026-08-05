@@ -257,6 +257,7 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
   };
 
   const handleDragStart = (e, file) => {
+    e.dataTransfer.setData('application/teleclone-internal-drag', 'true');
     if (!selectedFiles.some(f => f.messageId === file.messageId)) {
       if (setSelectedFiles) setSelectedFiles([file]);
       e.dataTransfer.setData('text/plain', JSON.stringify([file.messageId]));
