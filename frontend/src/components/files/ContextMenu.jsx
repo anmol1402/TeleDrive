@@ -88,7 +88,14 @@ const ContextMenu = ({ x, y, file, onClose, actions }) => {
 
 
   return (
-    <div ref={menuRef} style={style} className="animate-fade-in" onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+    <div 
+      ref={menuRef} 
+      style={style} 
+      className="animate-fade-in" 
+      onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); }}
+      onMouseDown={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
+    >
       <MenuItem icon={ExternalLink} label="Open" onClick={() => actions.onOpen(file)} onClose={onClose} />
       {!file.isFolder && <MenuItem icon={Eye} label="Preview" onClick={() => actions.onPreview(file)} onClose={onClose} />}
       
