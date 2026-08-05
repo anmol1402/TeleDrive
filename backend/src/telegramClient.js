@@ -410,6 +410,8 @@ async function downloadFile(messageId, req, res) {
     }
 
     const encodedFileName = encodeURIComponent(fileName);
+    const dispositionType = req.query?.download ? 'attachment' : 'inline';
+    const dispositionHeader = `${dispositionType}; filename*=UTF-8''${encodedFileName}`;
     const range = req.headers.range;
 
     let thumbSize;
@@ -443,13 +445,13 @@ async function downloadFile(messageId, req, res) {
                         'Accept-Ranges': 'bytes',
                         'Content-Length': chunksize,
                         'Content-Type': mimeType,
-                        'Content-Disposition': `inline; filename*=UTF-8''${encodedFileName}`
+                        'Content-Disposition': dispositionHeader
                     });
                     res.end(buffer.slice(start, end + 1));
                 } else {
                     res.setHeader('Content-Length', buffer.length);
                     res.setHeader('Content-Type', mimeType);
-                    res.setHeader('Content-Disposition', `inline; filename*=UTF-8''${encodedFileName}`);
+                    res.setHeader('Content-Disposition', dispositionHeader);
                     res.status(200).send(buffer);
                 }
                 return;
@@ -471,7 +473,7 @@ async function downloadFile(messageId, req, res) {
             'Accept-Ranges': 'bytes',
             'Content-Length': chunksize,
             'Content-Type': mimeType,
-            'Content-Disposition': `inline; filename*=UTF-8''${encodedFileName}`
+            'Content-Disposition': dispositionHeader
         });
 
         // Maximize Telegram's chunk size to 1MB to reduce latency
@@ -507,7 +509,7 @@ async function downloadFile(messageId, req, res) {
         res.end();
     } else {
         // Standard Download
-        res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodedFileName}`);
+        res.setHeader('Content-Disposition', req.query?.download ? dispositionHeader : `attachment; filename*=UTF-8''${encodedFileName}`);
         res.setHeader('Content-Length', fileSize);
         res.setHeader('Content-Type', mimeType);
         
