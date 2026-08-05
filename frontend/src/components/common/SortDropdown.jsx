@@ -51,11 +51,8 @@ const SortDropdown = ({ sortBy, setSortBy, sortOrder, setSortOrder }) => {
       </button>
 
       {isOpen && (
-        <div style={{
-          position: 'absolute', top: '100%', right: 0, marginTop: '0.5rem',
-          background: 'var(--bg-secondary)', border: '1px solid var(--border-color)',
-          borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-          minWidth: '220px', padding: '0.5rem', display: 'flex', flexDirection: 'column', zIndex: 50
+        <div className="dropdown-menu-responsive" style={{
+          minWidth: '220px', padding: '0.5rem'
         }}>
           
           <div style={{ padding: '0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
