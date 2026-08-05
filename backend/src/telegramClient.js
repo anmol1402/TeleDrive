@@ -318,6 +318,36 @@ async function updateFileMetadata(messageId, updates) {
     return newMeta;
 }
 
+async function duplicateFile(messageId, updates = {}) {
+    await ensureClient();
+    const messages = await client.getMessages('me', { ids: [parseInt(messageId)] });
+    if (!messages.length || !messages[0]) throw new Error("Message not found");
+    const msg = messages[0];
+    
+    let meta = {};
+    try {
+        if (msg.message && msg.message.startsWith('{')) {
+            meta = JSON.parse(msg.message);
+        }
+    } catch (e) {}
+    
+    // Duplicate files get an updated creation timestamp
+    const newMeta = { ...meta, ...updates, uploadedAt: new Date().toISOString() };
+    const newText = JSON.stringify(newMeta);
+    
+    const options = { message: newText };
+    if (msg.media) {
+        options.file = msg.media;
+    }
+    
+    const sent = await client.sendMessage('me', options);
+    
+    return {
+        messageId: sent.id,
+        ...newMeta
+    };
+}
+
 async function createFolder(folderName, parentPath, category) {
     await ensureClient();
     const metadata = JSON.stringify({
@@ -497,4 +527,4 @@ async function downloadFile(messageId, req, res) {
     }
 }
 
-module.exports = { connectClient, sendCode, login, uploadFile, fetchFiles, downloadFile, updateFileMetadata, createFolder, getUser, getProfilePicture, deleteFiles, getClient: () => client, setOnNewMessageCallback };
+module.exports = { connectClient, sendCode, login, uploadFile, fetchFiles, downloadFile, updateFileMetadata, duplicateFile, createFolder, getUser, getProfilePicture, deleteFiles, getClient: () => client, setOnNewMessageCallback };
