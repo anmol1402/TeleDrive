@@ -11,7 +11,7 @@ const formatBytes = (bytes, decimals = 1) => {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 };
 
-const Sidebar = ({ activeCategory, setActiveCategory, isSidebarOpen, files = [], currentPath, setCurrentPath, onNewUploadClick, totalStorage = 0 }) => {
+const Sidebar = ({ activeCategory, setActiveCategory, isSidebarOpen, files = [], currentPath, setCurrentPath, refreshFiles, onNewUploadClick, totalStorage = 0 }) => {
   const [expandedCategories, setExpandedCategories] = useState({ 'My Drive': true });
 
   const hasFolders = (catName) => {
@@ -66,7 +66,7 @@ const Sidebar = ({ activeCategory, setActiveCategory, isSidebarOpen, files = [],
             <div className={`folder-tree-wrapper ${activeCategory === cat.name && expandedCategories[cat.name] && hasFolders(cat.name) ? 'expanded' : ''}`}>
               <div className="folder-tree-inner">
                 {hasFolders(cat.name) && (
-                  <FolderTree files={files} currentPath={currentPath} setCurrentPath={setCurrentPath} category={cat.name} />
+                  <FolderTree files={files} currentPath={currentPath} setCurrentPath={setCurrentPath} refreshFiles={refreshFiles} category={cat.name} />
                 )}
               </div>
             </div>
