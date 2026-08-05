@@ -111,12 +111,33 @@ const Dashboard = ({ user, onLogout }) => {
   const fetchFiles = async (query = '') => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_URL}/api/files${query ? `?query=${encodeURIComponent(query)}` : ''}`);
+      const url = new URL(`${API_URL}/api/files`);
+      if (query) url.searchParams.append('query', query);
+      url.searchParams.append('t', Date.now()); // Cache buster
+      
+      const res = await fetch(url.toString(), { cache: 'no-store' });
       const data = await res.json();
       if (!res.ok || !data.success) {
         throw new Error(data.error || 'Unable to load files.');
       }
-      setFiles(data.files);
+      
+      setFiles(prevFiles => {
+         if (!prevFiles || prevFiles.length === 0) return data.files;
+         
+         const newFilesMap = new Map(data.files.map(f => [f.messageId, f]));
+         const now = Date.now();
+         
+         const optimisticFiles = prevFiles.filter(f => {
+            if (newFilesMap.has(f.messageId)) return false;
+            if (f.uploadedAt) {
+               return (now - new Date(f.uploadedAt).getTime()) < 60000;
+            }
+            return false;
+         });
+         
+         return [...optimisticFiles, ...data.files];
+      });
+      
       setLoadError('');
     } catch (error) {
       console.error("Failed to fetch files", error);
@@ -227,6 +248,31 @@ const Dashboard = ({ user, onLogout }) => {
         setUploadQueue(prev => prev.map(u => 
           u.id === upload.id ? { ...u, status: 'success', progress: 100 } : u
         ));
+
+        try {
+          const response = JSON.parse(xhr.responseText);
+          if (response.success && response.result && !response.duplicate) {
+             const meta = JSON.parse(response.result.metadata);
+             const newFile = {
+                 messageId: response.result.messageId,
+                 ...meta
+             };
+             
+             let folderPath = meta.folder || '/';
+             folderPath = String(folderPath).trim();
+             if (!folderPath.startsWith('/')) folderPath = '/' + folderPath;
+             if (folderPath.length > 1 && folderPath.endsWith('/')) folderPath = folderPath.slice(0, -1);
+             newFile.folder = folderPath;
+
+             setFiles(prev => {
+                if (prev.some(f => f.messageId === newFile.messageId)) return prev;
+                return [newFile, ...prev];
+             });
+          }
+        } catch(e) {
+          console.error("Failed to parse upload response", e);
+        }
+
         fetchFiles();
       } else {
         setUploadQueue(prev => prev.map(u => 
@@ -315,22 +361,44 @@ const Dashboard = ({ user, onLogout }) => {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  const dragCounter = useRef(0);
+
+  const hasFiles = (e) => {
+    return e.dataTransfer.types && (e.dataTransfer.types.includes('Files') || e.dataTransfer.types.includes('application/x-moz-file'));
+  };
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (hasFiles(e)) {
+      dragCounter.current += 1;
+      setIsDragging(true);
+    }
+  };
+
   const handleDragOver = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!isDragging) setIsDragging(true);
   };
 
   const handleDragLeave = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsDragging(false);
+    if (hasFiles(e)) {
+      dragCounter.current -= 1;
+      if (dragCounter.current <= 0) {
+        setIsDragging(false);
+        dragCounter.current = 0;
+      }
+    }
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    
     setIsDragging(false);
+    dragCounter.current = 0;
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       processFiles(e.dataTransfer.files);
@@ -427,9 +495,10 @@ const Dashboard = ({ user, onLogout }) => {
       }
     } else {
       if (currentPath !== '/') {
-        if (normalizePath(f.folder) !== normalizePath(currentPath)) return false;
+        if (normalizePath(f.folder).toLowerCase() !== normalizePath(currentPath).toLowerCase()) return false;
+        return true;
       } else if (activeCategory === 'My Drive') {
-        if (normalizePath(f.folder) !== normalizePath(currentPath)) return false;
+        if (normalizePath(f.folder).toLowerCase() !== normalizePath(currentPath).toLowerCase()) return false;
       }
     }
 
@@ -513,6 +582,7 @@ const Dashboard = ({ user, onLogout }) => {
             files={files}
             currentPath={currentPath}
             setCurrentPath={handleNavigate}
+            refreshFiles={fetchFiles}
             onNewUploadClick={() => setShowUploadModal(true)}
             totalStorage={totalStorage}
           />
@@ -588,7 +658,7 @@ const Dashboard = ({ user, onLogout }) => {
         />
       }
     >
-      <div className="main-content" onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div className="main-content" onDragEnter={handleDragEnter} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column' }}>
         {isDragging && (
           <div className="drag-overlay">
             <div className="drag-overlay-content">
