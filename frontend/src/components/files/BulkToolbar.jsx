@@ -42,7 +42,7 @@ const BulkToolbar = ({ selectedFiles, setSelectedFiles, refreshFiles }) => {
   const handleBulkDownload = () => {
     selectedFiles.forEach(f => {
       if (!f.isFolder) {
-        window.open(`${API_URL}/api/files/download/${f.messageId}`, '_blank');
+        window.open(`${API_URL}/api/files/download/${f.messageId}?download=1`, '_blank');
       }
     });
     setSelectedFiles([]);
