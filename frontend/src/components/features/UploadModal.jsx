@@ -4,10 +4,9 @@ import { UploadCloud, X } from 'lucide-react';
 const UploadModal = ({ isOpen, onClose, onUpload }) => {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
+  const dragCounter = useRef(0);
 
   if (!isOpen) return null;
-
-  const dragCounter = useRef(0);
 
   const handleDragEnter = (e) => {
     e.preventDefault();
