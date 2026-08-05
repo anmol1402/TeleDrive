@@ -3,7 +3,7 @@ const cors = require('cors');
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
-const { connectClient, sendCode, login, uploadFile, fetchFiles, downloadFile, updateFileMetadata, createFolder, getUser, getProfilePicture, deleteFiles } = require('./telegramClient');
+const { connectClient, sendCode, login, uploadFile, fetchFiles, downloadFile, updateFileMetadata, duplicateFile, createFolder, getUser, getProfilePicture, deleteFiles } = require('./telegramClient');
 const { semanticSearch, chatWithFiles, getRecommendations, getInsights } = require('./services/aiService');
 require('dotenv').config();
 
@@ -171,6 +171,16 @@ app.post('/api/files/update/:messageId', async (req, res) => {
     try {
         const updates = req.body;
         const result = await updateFileMetadata(req.params.messageId, updates);
+        res.json({ success: true, result });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/files/duplicate/:messageId', async (req, res) => {
+    try {
+        const updates = req.body;
+        const result = await duplicateFile(req.params.messageId, updates);
         res.json({ success: true, result });
     } catch (error) {
         res.status(500).json({ error: error.message });
