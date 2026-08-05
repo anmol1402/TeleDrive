@@ -645,15 +645,8 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
               style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--accent-primary)', borderRadius: '4px', padding: '2px 6px', fontSize: 'inherit', width: '100%', maxWidth: '120px' }}
             />
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', justifyContent: 'center' }}>
               <span className="file-name" title={file.filename}>{file.filename}</span>
-              <span 
-                style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', cursor: 'pointer', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} 
-                onClick={(e) => { e.stopPropagation(); if(setCurrentPath) setCurrentPath(file.folder || '/'); }}
-                title={file.folder || '/'}
-              >
-                {file.folder || '/'}
-              </span>
             </div>
           )}
         </div>
