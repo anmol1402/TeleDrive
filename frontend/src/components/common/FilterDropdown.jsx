@@ -13,6 +13,7 @@ export const FILTER_CATEGORIES = {
   'RAR': { icon: <Archive size={16} />, exts: ['rar'] },
   'APK': { icon: <File size={16} />, exts: ['apk'] },
   'Programming': { icon: <Terminal size={16} />, exts: ['js', 'jsx', 'ts', 'tsx', 'py', 'html', 'css', 'json', 'java', 'c', 'cpp', 'rs', 'go'] },
+  'Executables': { icon: <Terminal size={16} />, exts: ['exe', 'msi', 'bat', 'cmd', 'sh'] },
   'Archives': { icon: <Archive size={16} />, exts: ['zip', 'rar', '7z', 'tar', 'gz'] },
   'Documents': { icon: <FileText size={16} />, exts: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv', 'txt'] },
 };
@@ -77,12 +78,9 @@ const FilterDropdown = ({ activeFilters, setActiveFilters }) => {
       </button>
 
       {isOpen && (
-        <div style={{
-          position: 'absolute', top: '100%', right: 0, marginTop: '0.5rem',
-          background: 'var(--bg-secondary)', border: '1px solid var(--border-color)',
-          borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-          minWidth: '240px', padding: '0.5rem', display: 'flex', flexDirection: 'column',
-          maxHeight: '400px', overflowY: 'auto', zIndex: 50
+        <div className="dropdown-menu-responsive" style={{
+          minWidth: '240px', padding: '0.5rem',
+          maxHeight: '400px', overflowY: 'auto'
         }}>
           
           <div style={{ padding: '0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
