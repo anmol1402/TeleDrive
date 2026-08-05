@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import { File, Image as ImageIcon, FileText, Music, Video, Folder, Download, Eye, Star, Trash2, RotateCcw, XCircle, Share2, Edit2, MoreVertical } from 'lucide-react';
+import { File, Image as ImageIcon, FileText, Music, Video, Folder, Download, Eye, Star, Trash2, RotateCcw, XCircle, Share2, Edit2, MoreVertical, Terminal } from 'lucide-react';
 import ContextMenu from './ContextMenu';
 import FilePreviewModal from './FilePreviewModal';
 
@@ -149,6 +149,7 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
     if (filename.match(/\.(pdf|doc|docx|txt)$/i)) return <FileText size={24} color="#4285f4" />;
     if (filename.match(/\.(mp4|avi|mov|mkv)$/i)) return <Video size={24} color="#ea4335" />;
     if (filename.match(/\.(mp3|wav|ogg)$/i)) return <Music size={24} color="#fbbc04" />;
+    if (filename.match(/\.(exe|msi|bat|cmd|sh)$/i)) return <Terminal size={24} color="#10b981" />;
     return <File size={24} color="var(--text-secondary)" />;
   };
 
@@ -158,6 +159,7 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
     if (filename.match(/\.(pdf|doc|docx|txt)$/i)) return <FileText size={16} color="#4285f4" />;
     if (filename.match(/\.(mp4|avi|mov|mkv)$/i)) return <Video size={16} color="#ea4335" />;
     if (filename.match(/\.(mp3|wav|ogg)$/i)) return <Music size={16} color="#fbbc04" />;
+    if (filename.match(/\.(exe|msi|bat|cmd|sh)$/i)) return <Terminal size={16} color="#10b981" />;
     return <File size={16} color="var(--text-secondary)" />;
   };
 
@@ -296,8 +298,19 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
         return;
       }
 
-      const targetPath = currentPath === '/' ? `/${targetFolder.filename}` : `${currentPath}/${targetFolder.filename}`;
+      const targetPath = targetFolder.folder === '/' ? `/${targetFolder.filename}` : `${targetFolder.folder}/${targetFolder.filename}`;
       
+      const movedFiles = files.filter(f => messageIds.includes(f.messageId));
+      for (const item of movedFiles) {
+         if (item.isFolder) {
+            const itemPath = item.folder === '/' ? `/${item.filename}` : `${item.folder}/${item.filename}`;
+            if (targetPath.toLowerCase() === itemPath.toLowerCase() || targetPath.toLowerCase().startsWith(itemPath.toLowerCase() + '/')) {
+               alert(`Cannot move a folder into itself or its descendant (${item.filename}).`);
+               return;
+            }
+         }
+      }
+
       messageIds.forEach(id => {
          fetch(`${API_URL}/api/files/update/${id}`, {
             method: 'POST',
@@ -536,6 +549,15 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
               <span className="file-name" title={file.filename}>{file.filename}</span>
             )}
           </div>
+          <div className="hide-on-mobile" style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <span 
+              style={{ cursor: 'pointer', textDecoration: 'underline' }} 
+              onClick={(e) => { e.stopPropagation(); if(setCurrentPath) setCurrentPath(file.folder || '/'); }}
+              title={file.folder || '/'}
+            >
+              {file.folder || '/'}
+            </span>
+          </div>
           <div className="hide-on-mobile" style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
             {new Date(file.uploadedAt).toLocaleDateString()}
           </div>
@@ -584,7 +606,16 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
               style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--accent-primary)', borderRadius: '4px', padding: '2px 6px', fontSize: 'inherit', width: '100%', maxWidth: '120px' }}
             />
           ) : (
-            <span className="file-name" title={file.filename}>{file.filename}</span>
+            <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              <span className="file-name" title={file.filename}>{file.filename}</span>
+              <span 
+                style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', cursor: 'pointer', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} 
+                onClick={(e) => { e.stopPropagation(); if(setCurrentPath) setCurrentPath(file.folder || '/'); }}
+                title={file.folder || '/'}
+              >
+                {file.folder || '/'}
+              </span>
+            </div>
           )}
         </div>
       </div>
@@ -614,8 +645,10 @@ const FileGrid = ({ files, category, currentPath, setCurrentPath, refreshFiles, 
         <div className="file-list-view">
           <div className="list-header">
             <span>Name</span>
+            <span className="hide-on-mobile">Location</span>
             <span className="hide-on-mobile">Last Modified</span>
             <span className="hide-on-mobile">File Size</span>
+            <span></span>
           </div>
           {filteredFiles.map(renderCard)}
         </div>
